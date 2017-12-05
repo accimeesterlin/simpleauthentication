@@ -3,18 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <style>
+        .error p {
+            color: #fff;
+            padding: 10px;
+            border: 1px solid lightgrey;
+            width: 200px;
+            background: red;
+        }
+    </style>
 </head>
 <body>
 
-    <p>Please Sign In</p>
-    <form action="/signin" method="POST">
-        <label for="username">Username: </label>
-        <input type="text" placeholder="Enter username.." id="username" name="username"/>
+<p>Please Sign In</p>
+<form method="POST">
+    <label for="username">Username: </label>
+    <input type="text" placeholder="Enter username.." id="username" name="username"/>
 
-        <label for="password"></label>
-        <input type="password" placeholder="Enter password.." id="password" name="password"/>
+    <label for="password"></label>
+    <input type="password" placeholder="Enter password.." id="password" name="password"/>
 
-        <button> Sign up</button>
-    </form>
+    <button> Sign up</button>
+</form>
+
+<div class="error">
+
+</div>
+
+
+<script>
+
+    let msg = $('<p>');
+
+    let signIn = (event) => {
+        event.preventDefault();
+
+        let username = $("#username").val().trim();
+        let password = $("#password").val().trim();
+
+        let user = {
+            username: username,
+            password: password
+        };
+
+        $.post('/signin', user, (msg) => {
+            location.href = '/dashboard'
+        }).fail((response) => {
+            let error = JSON.parse(response.responseText).error;
+            msg.html(error);
+            $(".error").html(msg);
+        });
+    };
+
+    $('button').on('click', signIn);
+</script>
 </body>
 </html>

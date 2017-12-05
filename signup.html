@@ -3,10 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <style>
+        .error p{
+            color:#fff;
+            padding:10px;
+            border:1px solid lightgrey;
+            width:200px;
+            background: red;
+        }
+    </style>
 </head>
 <body>
     <p>Please Sign Up</p>
-    <form action="/signup" method="POST">
+    <form  method="POST">
         <label for="username">Username: </label>
         <input type="text" placeholder="Enter username.." id="username" name="username"/>
 
@@ -15,5 +26,37 @@
 
         <button> Sign up</button>
     </form>
+
+
+    <div class="error">
+
+    </div>
+
+    <script>
+
+        let msg = $('<p>');
+
+        let signUp = (event) => {
+            event.preventDefault();
+
+            let username = $("#username").val().trim();
+            let password = $("#password").val().trim();
+
+            let user = {
+                username:username,
+                password:password
+            };
+
+            $.post('/signup', user, (msg) => {
+                location.href = '/dashboard'
+            }).fail((response) => {
+                let error = JSON.parse(response.responseText).error;
+                    msg.html(error);
+                $(".error").html(msg);
+            });
+        };
+
+        $('button').on('click', signUp);
+    </script>
 </body>
 </html>

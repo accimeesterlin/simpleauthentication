@@ -77,7 +77,7 @@ app.post('/signup', (req, res) => {
     User.findOne({username: user.username})
         .then((currentUser) => {
             if(currentUser){
-                res.redirect('/signup');
+                res.status(401).json({error:"User already exists, try again"});
             } else{
                 let newUser = User({
                     username:user.username,
@@ -86,8 +86,8 @@ app.post('/signup', (req, res) => {
 
                 newUser.save((err) => {
                     if(err)
-                        res.redirect('/signup');
-                    res.redirect('/dashboard');
+                        res.status(401).json({error: "We were not able to create the user"});
+                    res.status(200).json({message: "User created"});
                 });
             }
         });
@@ -99,20 +99,18 @@ app.post('/signin', (req, res) => {
     const user = req.body;
     User.findOne({username: user.username})
         .then((currentUser) => {
-            console.log(currentUser.password);
-
-            if(!currentUser){
-                res.redirect('/signin');
-            }
 
             if(!bcrypt.compareSync(user.password, currentUser.password)){
-                res.redirect('/signin')
+                res.status(401).json({error: "Password doesn't match!"});
             }
 
             else{
-                res.redirect('/dashboard');
+                res.status(200).json({message:"User created!!"});
             }
 
+        })
+        .catch(() => {
+            res.status(401).json({error:"No user found"});
         });
 });
 
