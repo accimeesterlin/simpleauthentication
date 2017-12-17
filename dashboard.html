@@ -7,5 +7,36 @@
 </head>
 <body>
     <p>Welcome to the Dashboard</p>
+
+    <button> Sign Out </button>
+
+    <script >
+
+    	let checkToken = localStorage.getItem('token');
+
+	    if(!checkToken){
+	        location.href = '/signin'
+	    }
+
+
+    	let token = localStorage.getItem('token') ;
+
+    	$.ajax({
+    		url:'/users',
+    		method:'GET',
+    		headers:{
+    			'x-token': token
+    		},
+    		success: (data) => {
+    			console.log("Data: ", data);
+    		}
+    	});
+
+
+    	$("button").on('click', () => {
+    		localStorage.removeItem('token');
+    		location.href = '/signin'
+    	});
+    </script>
 </body>
 </html>

@@ -17,7 +17,7 @@
 </head>
 <body>
     <p>Please Sign Up</p>
-    <form  method="POST">
+    <form >
         <label for="username">Username: </label>
         <input type="text" placeholder="Enter username.." id="username" name="username"/>
 
@@ -47,13 +47,22 @@
                 password:password
             };
 
-            $.post('/signup', user, (msg) => {
-                location.href = '/dashboard'
-            }).fail((response) => {
-                let error = JSON.parse(response.responseText).error;
-                    msg.html(error);
-                $(".error").html(msg);
-            });
+            $.ajax({
+                url:'/signup', 
+                method:'POST',
+                data:user,
+                success:(data, textStatus, request) => {
+                    let token = request.getResponseHeader('x-token');
+                    localStorage.setItem('token', token);
+                    location.href = '/dashboard';
+     
+                },
+                error:(response) => {
+                    let error = JSON.parse(response.responseText).error;
+                        msg.html(error);
+                    $(".error").html(msg);
+                }
+            })
         };
 
         $('button').on('click', signUp);

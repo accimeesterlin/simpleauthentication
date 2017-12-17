@@ -35,6 +35,12 @@
 
 <script>
 
+    let checkToken = localStorage.getItem('token');
+
+    if(checkToken){
+        location.href = '/dashboard'
+    }
+
     let msg = $('<p>');
 
     let signIn = (event) => {
@@ -48,12 +54,21 @@
             password: password
         };
 
-        $.post('/signin', user, (msg) => {
-            location.href = '/dashboard'
-        }).fail((response) => {
-            let error = JSON.parse(response.responseText).error;
-            msg.html(error);
-            $(".error").html(msg);
+        $.ajax({
+            url:'/signin', 
+            method:'POST',
+            data:user,
+            success:(data, textStatus, request) => {
+                let token = request.getResponseHeader('x-token');
+                localStorage.setItem('token', token);
+                location.href = '/dashboard';
+     
+            },
+            error:(response) => {
+                let error = JSON.parse(response.responseText).error;
+                msg.html(error);
+                $(".error").html(msg);
+            }
         });
     };
 
